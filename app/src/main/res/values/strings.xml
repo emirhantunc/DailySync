@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">DailySync</string>
+    <string name="network_error">Please check your network connection!</string>
+    <string name="profile_name">Profile</string>
+    <string name="home_name">Home</string>
+    <string name="search_name">Search</string>
+</resources>
