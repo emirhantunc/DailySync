@@ -17,5 +17,4 @@ abstract class BindingSearchRepositoryModule {
     @ViewModelScoped
     abstract fun bindingSearchRepository(impl: SearchRepositoryImpl): SearchRepository
 
-
 }

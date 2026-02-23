@@ -1,9 +1,10 @@
 package com.example.dailysync.features.home.data.model
 
-import com.example.dailysync.features.home.domain.model.GoalsModel
-
 data class PostEntity(
-    val userName: String,
-    val goals: GoalsEntity,
-    val likeNumber: Int
+    val postId: String = "",
+    val name: String = "",
+    val userId: String = "",
+    val goals: GoalsEntity = GoalsEntity(),
+    val likeNumber: Int = 0,
+    val releaseDate: Long = 0L
 )

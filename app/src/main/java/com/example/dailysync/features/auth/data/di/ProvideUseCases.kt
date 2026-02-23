@@ -18,9 +18,13 @@ object ProvideUseCases {
     @Provides
     @ViewModelScoped
     fun provideAuthUseCases(
-        singUpUseCase: SingUpUseCase, singInUseCase: SingInUseCase
+        singUpUseCase: SingUpUseCase,
+        singInUseCase: SingInUseCase
     ): AuthUseCases {
-        return AuthUseCases(singInUseCase = singInUseCase, singUpUseCase = singUpUseCase)
+        return AuthUseCases(
+            singInUseCase = singInUseCase,
+            singUpUseCase = singUpUseCase
+        )
     }
 
 }

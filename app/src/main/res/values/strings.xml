@@ -1,7 +1,114 @@
 <resources>
     <string name="app_name">DailySync</string>
     <string name="network_error">Please check your network connection!</string>
+    <string name="account_not_found">Account Not Found!</string>
     <string name="profile_name">Profile</string>
     <string name="home_name">Home</string>
+    <string name="sing_in_message">Pick up where you left off.</string>
+    <string name="e_mail">E-mail</string>
+    <string name="password">Password</string>
+    <string name="sign_in">Sign In</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="ask_for_sign_up">You don\t have an account? Sign up</string>
+    <string name="create_new_account">Create New Account</string>
+    <string name="name_surname">Name Surname</string>
+    <string name="have_account">Have an account? Sign in</string>
     <string name="search_name">Search</string>
+    <string name="upload_post_name">Upload</string>
+    <string name="user_name">User Name</string>
+    <string name="id">Id</string>
+    <string name="set_profile">Set Profile</string>
+    <string name="follow">Follow</string>
+    <string name="last_activities">Last activities</string>
+    <string name="no_activity">There is no activity!</string>
+    <string name="no_account">There is no account!</string>
+    <string name="ok">OK</string>
+    <string name="user_id_label">ID:%1$s</string>
+    <string name="display_name_label">Display Name:%1$s</string>
+    <string name="greetings_name_label">Hello,:%1$s</string>
+    <string name="email_label">ID:%1$s</string>
+    <string name="search_text">Find new friends!</string>
+    <string name="search_account">Search account</string>
+    <string name="following">Following</string>
+    <string name="following_success">You just followed</string>
+    <string name="following_failure">Following failed!</string>
+    <string name="unknown_error">Unknown Error!</string>
+    <string name="weak_password">Weak Password!</string>
+    <string name="email_occupied">Email Occupied!</string>
+    <string name="error">Error!</string>
+    <string name="create_goals_error">An error occurred while creating the goals!</string>
+    <string name="today_goals">Today is goals!</string>
+    <string name="create_goal_success">Adding new goals successfully!</string>
+    <string name="upload_posts">Upload Posts</string>
+    <string name="select_goals">Select Goals</string>
+    <string name="no_goals">No goals available</string>
+    <string name="upload_button">Upload</string>
+    <string name="upload_success">Posts uploaded successfully!</string>
+    <string name="select_at_least_one">Please select at least one goal</string>
+    <string name="my_goals">My Goals</string>
+    <string name="add_new_goal">Add New Goal</string>
+    <string name="goal_hint">Goal</string>
+    <string name="time_range_hint">Time Range (09:00-10:00)</string>
+    <string name="target_hint">Target</string>
+    <string name="save_goal">Save Goal</string>
+    <string name="goal_saved">Goal saved successfully!</string>
+    <string name="fill_all_fields">Please fill all fields</string>
+    <string name="save_successfully_snackBar_message">Goal saved successfully!</string>
+    <string name="logout">Logout</string>
+    <string name="logout_dialog_title">Logout</string>
+    <string name="logout_dialog_message">Are you sure you want to logout?</string>
+    <string name="cancel">Cancel</string>
+    <string name="confirm">Confirm</string>
+    <string name="whats_your_thought">What\'s on your mind?</string>
+    <string name="share">Share</string>
+    <string name="thought_shared">Thought shared successfully!</string>
+    <string name="empty_thought">Please write something</string>
+    <string name="friends_plans">Friends\' Plans</string>
+    <string name="notifications">Notifications</string>
+    <string name="no_notifications">No notifications yet</string>
+    <string name="new_follower">started following you</string>
+    <string name="liked_your_post">liked your post</string>
+    <string name="mark_all_read">Mark all as read</string>
+    <string name="loading">Loading...</string>
+    <string name="just_now">just now</string>
+
+    <plurals name="years_ago">
+        <item quantity="one">%d year ago</item>
+        <item quantity="other">%d years ago</item>
+    </plurals>
+
+    <plurals name="months_ago">
+        <item quantity="one">%d month ago</item>
+        <item quantity="other">%d months ago</item>
+    </plurals>
+
+    <plurals name="weeks_ago">
+        <item quantity="one">%d week ago</item>
+        <item quantity="other">%d weeks ago</item>
+    </plurals>
+
+    <plurals name="days_ago">
+        <item quantity="one">%d day ago</item>
+        <item quantity="other">%d days ago</item>
+    </plurals>
+
+    <plurals name="hours_ago">
+        <item quantity="one">%d hour ago</item>
+        <item quantity="other">%d hours ago</item>
+    </plurals>
+
+    <plurals name="minutes_ago">
+        <item quantity="one">%d minute ago</item>
+        <item quantity="other">%d minutes ago</item>
+    </plurals>
+
+    <string name="messages">Messages</string>
+    <string name="no_messages">No messages yet</string>
+    <string name="type_message">Type a message</string>
+    <string name="send">Send</string>
+    <string name="new_conversation">New Conversation</string>
+    <string name="select_friend">Select a friend to start chatting</string>
+    <string name="start_time">Start Time</string>
+    <string name="end_time">End Time</string>
+    <string name="select_time">Select Time</string>
 </resources>

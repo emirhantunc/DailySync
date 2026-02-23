@@ -1,13 +1,15 @@
 package com.example.dailysync.features.home.data.di
 
-import com.example.dailysync.features.home.domain.usecases.FetchUseCase
-import com.example.dailysync.features.home.domain.usecases.HomeUseCases
-import com.example.dailysync.features.home.domain.usecases.ShareGoalUseCase
+import com.example.dailysync.features.home.domain.usecases.*
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.scopes.ViewModelScoped
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 
 @Module
@@ -17,9 +19,22 @@ object HomeModule {
     @Provides
     @ViewModelScoped
     fun provideHomeUseCase(
-        fetchUseCase: FetchUseCase,
-        shareGoalUseCase: ShareGoalUseCase
+        getUserProfileUseCase: GetUserProfileUseCase,
+        shareThoughtUseCase: ShareThoughtUseCase,
+        getLikedFeedsUseCase: GetLikedFeedsUseCase,
+        fetchFeedsUseCase: FetchFeedsUseCase,
+        likeContentUseCase: LikeContentUseCase,
+        unlikeContentUseCase: UnlikeContentUseCase,
+        getUnreadNotificationCountUseCase: GetUnreadNotificationCountUseCase
     ): HomeUseCases {
-        return HomeUseCases(fetchUseCase = fetchUseCase, shareGoalUseCase = shareGoalUseCase)
+        return HomeUseCases(
+            getUserProfileUseCase = getUserProfileUseCase,
+            shareThoughtUseCase = shareThoughtUseCase,
+            getLikedFeedsUseCase = getLikedFeedsUseCase,
+            fetchFeedsUseCase = fetchFeedsUseCase,
+            likeContentUseCase = likeContentUseCase,
+            unlikeContentUseCase = unlikeContentUseCase,
+            getUnreadNotificationCountUseCase = getUnreadNotificationCountUseCase
+        )
     }
 }

@@ -2,11 +2,11 @@ package com.example.dailysync.features.search.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.dailysync.R
-import com.example.dailysync.features.search.domain.exception.SearchError
+import com.example.dailysync.core.enums.ErrorType
+import com.example.dailysync.core.exceptions.AppExceptions
 import com.example.dailysync.features.search.domain.usecases.SearchUseCase
 import com.example.dailysync.features.search.presentation.mapper.toSearchPresentationList
-import com.example.dailysync.features.search.presentation.model.SearchPresentation
+import com.example.dailysync.features.search.presentation.models.SearchPresentation
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,14 +18,12 @@ import kotlinx.coroutines.launch
 
 data class SearchState(
     val users: List<SearchPresentation> = emptyList(),
-    val error: Int? = null
+    val errorType: ErrorType? = null
 )
-
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
     private val searchUseCase: SearchUseCase
-
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(SearchState())
 
@@ -46,10 +44,10 @@ class SearchViewModel @Inject constructor(
                 },
                 onFailure = { error ->
                     when (error) {
-                        is SearchError.NetworkError->{
+                        is AppExceptions.Network.NoInternet->{
                             _uiState.update {state->
                                 state.copy(
-                                    error = R.string.network_error
+                                    errorType = ErrorType.NETWORK_ERROR
                                 )
                             }
                         }

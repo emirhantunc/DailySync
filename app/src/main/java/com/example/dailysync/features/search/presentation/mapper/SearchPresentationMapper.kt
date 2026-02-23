@@ -1,12 +1,12 @@
 package com.example.dailysync.features.search.presentation.mapper
 
-import com.example.dailysync.features.search.domain.model.SearchModel
-import com.example.dailysync.features.search.presentation.model.SearchPresentation
+import com.example.dailysync.features.search.domain.models.SearchModel
+import com.example.dailysync.features.search.presentation.models.SearchPresentation
 
 
 fun SearchModel.toSearchPresentation(): SearchPresentation {
     return SearchPresentation(
-        userName = userName,
+        name = name,
         id = id
     )
 }

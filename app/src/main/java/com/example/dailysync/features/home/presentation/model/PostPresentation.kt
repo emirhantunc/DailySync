@@ -1,9 +1,10 @@
 package com.example.dailysync.features.home.presentation.model
 
-import com.example.dailysync.features.home.domain.model.GoalsModel
-
 data class PostPresentation(
-    val userName: String,
-    val goals: GoalsPresentation,
-    val likeNumber: Int
+    val postId: String="",
+    val name: String="",
+    val userId: String="",
+    val goals: GoalsPresentation=GoalsPresentation(),
+    val likeNumber: Int=0,
+    val releaseDate: Long = 0L
 )

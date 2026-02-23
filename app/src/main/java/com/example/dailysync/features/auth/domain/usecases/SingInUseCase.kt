@@ -1,6 +1,6 @@
 package com.example.dailysync.features.auth.domain.usecases
 
-import com.example.dailysync.features.auth.domain.model.SignInModel
+import com.example.dailysync.features.auth.domain.models.SignInModel
 import com.example.dailysync.features.auth.domain.repository.AuthRepository
 import jakarta.inject.Inject
 

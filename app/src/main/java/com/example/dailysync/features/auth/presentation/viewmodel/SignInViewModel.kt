@@ -3,11 +3,11 @@ package com.example.dailysync.features.auth.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dailysync.R
-import com.example.dailysync.features.auth.domain.exceptions.SingInError
+import com.example.dailysync.core.enums.ErrorType
+import com.example.dailysync.core.exceptions.AppExceptions
 import com.example.dailysync.features.auth.domain.usecases.AuthUseCases
 import com.example.dailysync.features.auth.presentation.mapper.toSignModel
 import com.example.dailysync.features.auth.presentation.models.SignInPresentation
-import com.example.dailysync.features.search.presentation.viewmodel.SearchState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,7 +20,7 @@ import javax.inject.Inject
 data class SignInPresentationState(
     val email: String = "",
     val password: String = "",
-    val error: Int? = null,
+    val errorType: ErrorType? = null,
     val isLoading: Boolean = false,
     val isSuccess: Boolean = false
 )
@@ -51,28 +51,34 @@ class SignInViewModel @Inject constructor(
                     _uiState.update { state ->
                         state.copy(isLoading = false, isSuccess = true)
                     }
-
                 }, onFailure = { error ->
                     when (error) {
-                        is SingInError.NetworkError -> {
+                        is AppExceptions.Network.NoInternet -> {
                             _uiState.update { state ->
-                                state.copy(isLoading = false, error = R.string.network_error)
+                                state.copy(isLoading = false, errorType = ErrorType.NETWORK_ERROR)
+                            }
+                        }
+                        is AppExceptions.Auth.AccountNotFound->{
+                            _uiState.update {state->
+                                state.copy(isLoading = false, errorType = ErrorType.ACCOUNT_NOT_FOUND)
+                            }
+                        }
+                        is AppExceptions.Auth.InvalidCredentials->{
+                            _uiState.update {state->
+                                state.copy(isLoading = false, errorType = ErrorType.INVALID_CREDENTIALS)
                             }
                         }
                     }
-
                 }
             )
-
         }
     }
 
     fun onEmailChange(newValue: String) {
-        _uiState.update { it.copy(email = newValue, error = null) }
+        _uiState.update { it.copy(email = newValue, errorType = null) }
     }
 
     fun onPasswordChange(newValue: String) {
-        _uiState.update { it.copy(password = newValue, error = null) }
+        _uiState.update { it.copy(password = newValue, errorType = null) }
     }
-
 }

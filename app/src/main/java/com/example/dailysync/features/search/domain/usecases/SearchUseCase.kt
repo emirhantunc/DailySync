@@ -1,6 +1,6 @@
 package com.example.dailysync.features.search.domain.usecases
 
-import com.example.dailysync.features.search.domain.model.SearchModel
+import com.example.dailysync.features.search.domain.models.SearchModel
 import com.example.dailysync.features.search.domain.repository.SearchRepository
 import jakarta.inject.Inject
 

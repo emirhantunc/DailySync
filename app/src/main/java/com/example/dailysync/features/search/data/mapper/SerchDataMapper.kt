@@ -1,19 +1,12 @@
 package com.example.dailysync.features.search.data.mapper
 
-import com.example.dailysync.features.search.data.model.SearchEntity
-import com.example.dailysync.features.search.domain.model.SearchModel
-
-fun SearchModel.toSearchEntity(): SearchEntity {
-    return SearchEntity(
-        userName = userName,
-        id = id
-    )
-}
+import com.example.dailysync.features.search.data.models.SearchEntity
+import com.example.dailysync.features.search.domain.models.SearchModel
 
 
 fun SearchEntity.toSearchModel(): SearchModel {
     return SearchModel(
-        userName = userName,
+        name = name,
         id = id
     )
 }

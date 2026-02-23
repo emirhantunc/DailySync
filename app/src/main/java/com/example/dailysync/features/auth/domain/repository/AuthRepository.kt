@@ -1,7 +1,7 @@
 package com.example.dailysync.features.auth.domain.repository
 
-import com.example.dailysync.features.auth.domain.model.SignInModel
-import com.example.dailysync.features.auth.domain.model.SignUpModel
+import com.example.dailysync.features.auth.domain.models.SignInModel
+import com.example.dailysync.features.auth.domain.models.SignUpModel
 
 interface AuthRepository {
     suspend fun singIn(model: SignInModel): Result<Unit>

@@ -1,30 +1,24 @@
 package com.example.dailysync.features.home.presentation.mapper
 
-import com.example.dailysync.features.home.domain.model.GoalInfo
-import com.example.dailysync.features.home.domain.model.GoalsModel
-import com.example.dailysync.features.home.domain.model.PostModel
+import com.example.dailysync.features.home.domain.models.FeedModel
+import com.example.dailysync.features.home.domain.models.GoalInfo
+import com.example.dailysync.features.home.domain.models.GoalsModel
+import com.example.dailysync.features.home.domain.models.PostModel
+import com.example.dailysync.features.home.domain.models.ThoughtModel
+import com.example.dailysync.features.home.presentation.model.FeedPresentation
 import com.example.dailysync.features.home.presentation.model.GoalInfoPresentation
 import com.example.dailysync.features.home.presentation.model.GoalsPresentation
 import com.example.dailysync.features.home.presentation.model.PostPresentation
-
-
-fun PostModel.toPostPresentation(): PostPresentation {
-    return PostPresentation(
-        userName = userName,
-        goals = goals.toGoalsPresentation(),
-        likeNumber = likeNumber
-    )
-}
-
-fun List<PostModel>.toPostPresentationList(): List<PostPresentation> {
-    return this.map { it.toPostPresentation() }
-}
+import com.example.dailysync.features.home.presentation.model.ThoughtPresentation
 
 
 fun GoalInfo.toGoalInfoPresentation(): GoalInfoPresentation {
     return GoalInfoPresentation(
         goal = goal,
-        id = id
+        id = id,
+        timeRange = timeRange,
+        target = target,
+        isCompleted = isCompleted
     )
 }
 
@@ -34,36 +28,30 @@ fun List<GoalInfo>.toGoalInfoPresentationList(): List<GoalInfoPresentation> {
 
 fun GoalsModel.toGoalsPresentation(): GoalsPresentation {
     return GoalsPresentation(
-        goals = goals.toGoalInfoPresentationList(),
-        completedGoals = completedGoals
+        goals = goals.toGoalInfoPresentationList()
     )
 }
 
 
-fun GoalsPresentation.toGoalModel(): GoalsModel {
-    return GoalsModel(
-        goals = goals.toGoalInfoList(),
-        completedGoals = completedGoals
+fun FeedModel.toFeedPresentation(): FeedPresentation {
+    return FeedPresentation(
+        id = id,
+        feedId = feedId,
+        targetId = targetId,
+        type = type,
+        name = name,
+        userId = userId,
+        likeNumber = likeNumber,
+        releaseTime = releaseTime,
+        thoughtContent = thoughtContent,
+        goals = goals?.toGoalsPresentation()
     )
 }
 
-fun GoalInfoPresentation.toGoalInfo(): GoalInfo{
-    return GoalInfo(
-        goal = goal,
-        id = id
-    )
+fun List<FeedModel>.toFeedPresentationList(): List<FeedPresentation> {
+    return this.map { it.toFeedPresentation() }
 }
 
 
-fun List<GoalInfoPresentation>.toGoalInfoList(): List<GoalInfo>{
-    return this.map { it.toGoalInfo() }
-}
 
 
-fun PostPresentation.toPostModel(): PostModel{
-    return PostModel(
-        userName = userName,
-        goals = goals.toGoalModel(),
-        likeNumber = likeNumber
-    )
-}

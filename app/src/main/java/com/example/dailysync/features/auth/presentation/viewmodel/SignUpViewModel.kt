@@ -2,8 +2,8 @@ package com.example.dailysync.features.auth.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.dailysync.R
-import com.example.dailysync.features.auth.domain.exceptions.SingInError
+import com.example.dailysync.core.enums.ErrorType
+import com.example.dailysync.core.exceptions.AppExceptions
 import com.example.dailysync.features.auth.domain.usecases.AuthUseCases
 import com.example.dailysync.features.auth.presentation.mapper.toSignModel
 import com.example.dailysync.features.auth.presentation.models.SignUpPresentation
@@ -20,7 +20,7 @@ data class SignUpPresentationState(
     val name: String = "",
     val email: String = "",
     val password: String = "",
-    val error: Int? = null,
+    val errorType: ErrorType? = null,
     val isLoading: Boolean = false,
     val isSuccess: Boolean = false
 )
@@ -37,7 +37,7 @@ class SignUpViewModel @Inject constructor(
     fun signUp() {
         viewModelScope.launch {
             _uiState.update { state ->
-                state.copy(isLoading = true, error = null)
+                state.copy(isLoading = true, errorType = null)
             }
 
             val result = authUseCases.singUpUseCase(
@@ -53,25 +53,29 @@ class SignUpViewModel @Inject constructor(
                     _uiState.update { it.copy(isLoading = false, isSuccess = true) }
                 },
                 onFailure = { error ->
-                    val errorRes = when (error) {
-                        is SingInError.NetworkError -> R.string.network_error
-                        else -> R.string.network_error
+                    val errorType = when (error) {
+                        is AppExceptions.Network.NoInternet ->
+                            ErrorType.NETWORK_ERROR
+
+                        is AppExceptions.Auth.WeakPassword -> ErrorType.WEAK_PASSWORD
+                        is AppExceptions.Auth.EmailOccupied -> ErrorType.EMAIL_OCCUPIED
+                        else -> ErrorType.UNKNOWN_ERROR
                     }
-                    _uiState.update { it.copy(isLoading = false, error = errorRes) }
+                    _uiState.update { it.copy(isLoading = false, errorType = errorType) }
                 }
             )
         }
     }
 
     fun onEmailChange(newValue: String) {
-        _uiState.update { it.copy(email = newValue, error = null) }
+        _uiState.update { it.copy(email = newValue, errorType = null) }
     }
 
     fun onPasswordChange(newValue: String) {
-        _uiState.update { it.copy(password = newValue, error = null) }
+        _uiState.update { it.copy(password = newValue, errorType = null) }
     }
 
     fun onNameChange(newValue: String) {
-        _uiState.update { it.copy(name = newValue, error = null) }
+        _uiState.update { it.copy(name = newValue, errorType = null) }
     }
 }

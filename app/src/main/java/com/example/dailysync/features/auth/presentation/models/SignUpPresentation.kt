@@ -1,7 +1,8 @@
 package com.example.dailysync.features.auth.presentation.models
 
 data class SignUpPresentation(
-    val email: String,
-    val name: String,
-    val password: String
+    val email: String = "",
+    val name: String = "",
+    val password: String = "",
+    val followers: List<FollowersAuthPresentation> = emptyList()
 )

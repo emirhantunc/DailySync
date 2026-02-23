@@ -12,6 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -21,28 +22,32 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.navigation.NavController
+import com.example.dailysync.R
+import com.example.dailysync.core.enums.ErrorType
+import com.example.dailysync.core.ui.LoadingProgressBar
 import com.example.dailysync.features.auth.presentation.ui.components.AuthTextField
 import com.example.dailysync.features.auth.presentation.viewmodel.SignInViewModel
 
 @Composable
 fun SignInScreen(
-    navController: NavController,
-    onSingInClick: () -> Unit,
-    viewModel: SignInViewModel = hiltViewModel()
+    onSingUpClick: () -> Unit,
+    viewModel: SignInViewModel = hiltViewModel(),
+    onNavigateToHome: () -> Unit
 ) {
 
     val uiState by viewModel.uiState.collectAsState()
 
+    if (uiState.isLoading) {
+        LoadingProgressBar()
+    }
     LaunchedEffect(uiState.isSuccess) {
         if (uiState.isSuccess) {
-            navController.navigate("home") {
-                popUpTo("signIn") { inclusive = true }
-            }
+            onNavigateToHome()
         }
     }
 
@@ -54,12 +59,12 @@ fun SignInScreen(
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "DailySync",
+            text = stringResource(R.string.app_name),
             style = MaterialTheme.typography.headlineMedium,
             color = MaterialTheme.colorScheme.primary
         )
         Text(
-            text = "Yolculuğuna kaldığın yerden devam et.",
+            text = stringResource(R.string.sing_in_message),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(bottom = 32.dp)
@@ -68,7 +73,7 @@ fun SignInScreen(
         AuthTextField(
             value = uiState.email,
             onValueChange = { viewModel.onEmailChange(it) },
-            label = "E-posta",
+            label = stringResource(R.string.e_mail),
             leadingIcon = Icons.Default.Email
         )
 
@@ -77,10 +82,26 @@ fun SignInScreen(
         AuthTextField(
             value = uiState.password,
             onValueChange = { viewModel.onPasswordChange(it) },
-            label = "Şifre",
+            label = stringResource(R.string.password),
             leadingIcon = Icons.Default.Lock,
             visualTransformation = PasswordVisualTransformation()
         )
+
+        val errorMessage = when (uiState.errorType) {
+            ErrorType.NETWORK_ERROR -> stringResource(R.string.network_error)
+            ErrorType.ACCOUNT_NOT_FOUND -> stringResource(R.string.account_not_found)
+            ErrorType.INVALID_CREDENTIALS -> stringResource(R.string.account_not_found)
+            else -> {
+                stringResource(R.string.unknown_error)
+            }
+        }
+        if (uiState.errorType != null) {
+            Text(
+                text = errorMessage,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.displaySmall
+            )
+        }
 
         Button(
             onClick = { viewModel.signIn() },
@@ -88,16 +109,23 @@ fun SignInScreen(
                 .fillMaxWidth()
                 .padding(top = 24.dp)
                 .height(56.dp),
-            shape = RoundedCornerShape(12.dp)
+            shape = RoundedCornerShape(12.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
         ) {
-            Text("Giriş Yap", style = MaterialTheme.typography.titleLarge.copy(fontSize = 18.sp))
+            Text(
+                stringResource(R.string.sign_in),
+                style = MaterialTheme.typography.titleLarge.copy(fontSize = 18.sp)
+            )
         }
 
         TextButton(
-            onClick = { onSingInClick() },
+            onClick = { onSingUpClick() },
             modifier = Modifier.padding(top = 8.dp)
         ) {
-            Text("Hesabın yok mu? Kayıt Ol", color = MaterialTheme.colorScheme.secondary)
+            Text(
+                stringResource(R.string.ask_for_sign_up),
+                color = MaterialTheme.colorScheme.secondary
+            )
         }
     }
 }
