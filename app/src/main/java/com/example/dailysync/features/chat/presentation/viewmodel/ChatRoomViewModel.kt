@@ -1,10 +1,10 @@
 package com.example.dailysync.features.chat.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dailysync.features.chat.domain.model.Message
-import com.example.dailysync.features.chat.domain.usecases.GetMessagesUseCase
-import com.example.dailysync.features.chat.domain.usecases.SendMessageUseCase
+import com.example.dailysync.features.chat.domain.usecases.ChatUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,6 +14,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class ChatRoomUiState(
+    val currentUserId: String? = null,
     val messages: List<Message> = emptyList(),
     val isLoading: Boolean = false,
     val messageText: String = ""
@@ -21,8 +22,7 @@ data class ChatRoomUiState(
 
 @HiltViewModel
 class ChatRoomViewModel @Inject constructor(
-    private val getMessagesUseCase: GetMessagesUseCase,
-    private val sendMessageUseCase: SendMessageUseCase
+    private val chatUseCases: ChatUseCases
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ChatRoomUiState())
@@ -30,11 +30,31 @@ class ChatRoomViewModel @Inject constructor(
 
     private var currentChatRoomId: String? = null
 
+    init {
+        getCurrentUserId()
+    }
+
+    fun getCurrentUserId(){
+        viewModelScope.launch {
+            chatUseCases.getCurrentUserIdUseCase().collect{result ->
+                result.fold(
+                    onSuccess = { userId ->
+                        _uiState.update { it.copy(currentUserId = userId) }
+
+                    },
+                    onFailure = {
+                        Log.d("ChatRoomViewModel", "getCurrentUserId: ${it.message}")
+
+                    }
+                )
+            }
+        }
+    }
     fun loadMessages(chatRoomId: String) {
         currentChatRoomId = chatRoomId
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
-            getMessagesUseCase(chatRoomId).collect { result ->
+            chatUseCases.getMessagesUseCase(chatRoomId).collect { result ->
                 result.onSuccess { messages ->
                     _uiState.update { it.copy(messages = messages, isLoading = false) }
                 }.onFailure {
@@ -55,7 +75,7 @@ class ChatRoomViewModel @Inject constructor(
         if (text.isEmpty()) return
 
         viewModelScope.launch {
-            sendMessageUseCase(chatRoomId, text).onSuccess {
+            chatUseCases.sendMessageUseCase(chatRoomId, text).onSuccess {
                 _uiState.update { it.copy(messageText = "") }
             }
         }

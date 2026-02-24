@@ -7,9 +7,9 @@ import com.example.dailysync.features.chat.data.mapper.toMessage
 import com.example.dailysync.features.chat.data.model.ChatRoomEntity
 import com.example.dailysync.features.chat.data.model.MessageEntity
 import com.example.dailysync.features.chat.domain.model.ChatRoom
+import com.example.dailysync.features.chat.domain.model.FollowingUser
 import com.example.dailysync.features.chat.domain.model.Message
 import com.example.dailysync.features.chat.domain.repository.ChatRepository
-import com.example.dailysync.features.chat.domain.repository.FollowingUser
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -50,11 +50,13 @@ class ChatRepositoryImpl @Inject constructor(
                         val chatRooms = snapshot.documents.mapNotNull { doc ->
                             try {
                                 val id = doc.id
-                                val participants = doc.get("participants") as? List<String> ?: emptyList()
+                                val participants =
+                                    doc.get("participants") as? List<String> ?: emptyList()
                                 val lastMessage = doc.getString("lastMessage") ?: ""
                                 val lastMessageTime = doc.getLong("lastMessageTime") ?: 0L
 
-                                val otherUserId = participants.firstOrNull { it != userId } ?: return@mapNotNull null
+                                val otherUserId = participants.firstOrNull { it != userId }
+                                    ?: return@mapNotNull null
 
                                 val otherUserDoc = firestore.collection("users")
                                     .document(otherUserId)
@@ -165,7 +167,8 @@ class ChatRepositoryImpl @Inject constructor(
                     .await()
                     .documents
                     .firstOrNull { doc ->
-                        val roomParticipants = (doc.get("participants") as? List<String>)?.sorted() ?: emptyList()
+                        val roomParticipants =
+                            (doc.get("participants") as? List<String>)?.sorted() ?: emptyList()
                         roomParticipants == participants
                     }
 
@@ -190,38 +193,38 @@ class ChatRepositoryImpl @Inject constructor(
             }
         }
 
-    override suspend fun getFollowingUsers(): Result<List<FollowingUser>> =
-        withContext(Dispatchers.IO) {
-            return@withContext try {
-                val userId = auth.currentUser?.uid
-                    ?: return@withContext Result.failure(AppExceptions.Auth.UserNotLoggedIn)
+    override suspend fun getFollowingUsers(): Result<List<FollowingUser>> {
+        return try {
+            val userId = auth.currentUser?.uid
+                ?: return Result.failure(AppExceptions.Auth.UserNotLoggedIn)
 
-                val userDoc = firestore.collection("users")
-                    .document(userId)
-                    .get()
-                    .await()
+            val userDoc = firestore.collection("users")
+                .document(userId)
+                .get()
+                .await()
 
-                val followingIds = userDoc.get("followingIds") as? List<String> ?: emptyList()
+            val followingIds = userDoc.get("followingIds") as? List<String> ?: emptyList()
 
-                val followingUsers = followingIds.mapNotNull { followingId ->
-                    try {
-                        val followingUserDoc = firestore.collection("users")
-                            .document(followingId)
-                            .get()
-                            .await()
+            val followingUsers = followingIds.mapNotNull { followingId ->
+                try {
+                    val followingUserDoc = firestore.collection("users")
+                        .document(followingId)
+                        .get()
+                        .await()
 
-                        val name = followingUserDoc.getString("name") ?: ""
-                        FollowingUser(id = followingId, name = name)
-                    } catch (e: Exception) {
-                        Log.e("ChatRepo", "Error fetching following user", e)
-                        null
-                    }
+                    val name = followingUserDoc.getString("name") ?: ""
+                    FollowingUser(id = followingId, name = name)
+                } catch (e: Exception) {
+                    Log.e("ChatRepo", "Error fetching following user", e)
+                    null
                 }
-
-                Result.success(followingUsers)
-            } catch (e: Exception) {
-                Log.e("ChatRepo", "Error getting following users", e)
-                Result.failure(AppExceptions.Unknown)
             }
+
+            Result.success(followingUsers)
+        } catch (e: Exception) {
+            Log.e("ChatRepo", "Error getting following users", e)
+            Result.failure(AppExceptions.Unknown)
         }
+
+    }
 }

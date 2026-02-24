@@ -41,10 +41,9 @@ import com.example.dailysync.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddGoalCard(
-    onSaveGoal: (String, String, String) -> Unit
+    onSaveGoal: (String, String) -> Unit
 ) {
     var goalText by remember { mutableStateOf("") }
-    var targetText by remember { mutableStateOf("") }
     var startHour by remember { mutableStateOf<Int?>(null) }
     var startMinute by remember { mutableStateOf<Int?>(null) }
     var endHour by remember { mutableStateOf<Int?>(null) }
@@ -137,31 +136,18 @@ fun AddGoalCard(
                 )
             }
 
-            OutlinedTextField(
-                value = targetText,
-                onValueChange = { targetText = it },
-                label = { Text(stringResource(R.string.target_hint)) },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = MaterialTheme.colorScheme.primary,
-                    unfocusedBorderColor = MaterialTheme.colorScheme.outline
-                )
-            )
-
             Button(
                 onClick = {
-                    if (goalText.isNotBlank() && timeRangeText.isNotBlank() && targetText.isNotBlank()) {
-                        onSaveGoal(goalText, timeRangeText, targetText)
+                    if (goalText.isNotBlank() && timeRangeText.isNotBlank()) {
+                        onSaveGoal(goalText, timeRangeText)
                         goalText = ""
-                        targetText = ""
                         startHour = null
                         startMinute = null
                         endHour = null
                         endMinute = null
                     }
                 },
-                enabled = goalText.isNotBlank() && timeRangeText.isNotBlank() && targetText.isNotBlank(),
+                enabled = goalText.isNotBlank() && timeRangeText.isNotBlank(),
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(

@@ -57,6 +57,19 @@ class UserProfileRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun getCurrentUserId(): Flow<Result<String?>>  = callbackFlow {
+        val listener = FirebaseAuth.AuthStateListener { auth ->
+            trySend(Result.success(auth.currentUser?.uid))
+        }
+
+        auth.addAuthStateListener(listener)
+
+        awaitClose {
+            auth.removeAuthStateListener(listener)
+        }
+    }
+
+
     override suspend fun signOut(): Result<Unit> {
         return try {
             auth.signOut()

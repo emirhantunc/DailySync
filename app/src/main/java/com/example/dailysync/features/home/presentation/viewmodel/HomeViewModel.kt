@@ -82,7 +82,7 @@ class HomeViewModel @Inject constructor(
     fun getUserProfile() {
         viewModelScope.launch {
             val result = homeUseCases.getUserProfileUseCase()
-            result.collect {result ->
+            result.collect { result ->
                 result.fold(
                     onSuccess = { userProfile ->
                         _uiState.update { currentState ->
@@ -224,9 +224,9 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun toggleLike(contentId: String, contentType: FeedType) {
-        val isCurrentlyLiked = _uiState.value.likedFeeds.contains(contentId)
-        updateLikeState(contentId, isLiked = !isCurrentlyLiked)
+    fun toggleLike(feedId: String, contentType: FeedType, contentId: String) {
+        val isCurrentlyLiked = _uiState.value.likedFeeds.contains(feedId)
+        updateLikeState(feedId, isLiked = !isCurrentlyLiked)
         viewModelScope.launch {
             val result = if (isCurrentlyLiked) {
                 homeUseCases.unlikeContentUseCase(contentId, contentType)
@@ -235,19 +235,18 @@ class HomeViewModel @Inject constructor(
             }
 
             result.onFailure { error ->
-                updateLikeState(contentId, isLiked = isCurrentlyLiked)
+                updateLikeState(feedId, isLiked = isCurrentlyLiked)
                 handleError(error)
             }
-
         }
     }
 
-    private fun updateLikeState(contentId: String, isLiked: Boolean) {
+    private fun updateLikeState(feedId: String, isLiked: Boolean) {
         _uiState.update { state ->
             val newLikedFeeds = if (isLiked) {
-                state.likedFeeds + contentId
+                state.likedFeeds + feedId
             } else {
-                state.likedFeeds - contentId
+                state.likedFeeds - feedId
             }
             state.copy(likedFeeds = newLikedFeeds)
         }
@@ -260,5 +259,4 @@ class HomeViewModel @Inject constructor(
         }
         _uiState.update { it.copy(errorType = errorType) }
     }
-
 }

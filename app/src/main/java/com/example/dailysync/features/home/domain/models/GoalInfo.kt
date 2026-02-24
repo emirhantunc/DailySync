@@ -4,6 +4,5 @@ data class GoalInfo(
     val goal: String = "",
     val id: String = "",
     val timeRange: String = "",
-    val target: String = "",
     val isCompleted: Boolean = false
 )

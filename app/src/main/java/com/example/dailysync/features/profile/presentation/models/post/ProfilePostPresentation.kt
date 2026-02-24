@@ -7,5 +7,5 @@ data class ProfilePostPresentation(
     val userId: String = "",
     val goals: ProfileGoalsPresentation = ProfileGoalsPresentation(),
     val likeNumber: Int = 0,
-    val releaseDate: Long = 0L
+    val releaseTime: Long = 0L
 )

@@ -99,12 +99,11 @@ class UploadPostsViewModel @Inject constructor(
         _uiState.update { it.copy(uploadSuccess = false) }
     }
 
-    fun addNewGoal(goal: String, timeRange: String, target: String) {
+    fun addNewGoal(goal: String, timeRange: String) {
         val newGoal = UserGoalPresentation(
             goal = goal,
             id = System.currentTimeMillis().toString(),
             timeRange = timeRange,
-            target = target,
             isSelected = false
         )
 

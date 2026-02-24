@@ -35,28 +35,15 @@ class ProfileRepositoryImpl @Inject constructor(
 ) : ProfileRepository {
 
 
-    override fun getCurrentUserId(): Flow<Result<String?>> = callbackFlow {
-
-        val listener = FirebaseAuth.AuthStateListener { auth ->
-            trySend(Result.success(auth.currentUser?.uid))
-        }
-
-        auth.addAuthStateListener(listener)
-
-        awaitClose {
-            auth.removeAuthStateListener(listener)
-        }
-    }
-
-    override suspend fun toggleFollow(id: String): Result<Unit> = withContext(Dispatchers.IO) {
+    override suspend fun toggleFollow(id: String): Result<Unit> {
         if (id.isBlank()) {
             Log.e("FollowError", "Id empty")
-            return@withContext Result.failure(AppExceptions.Profile.InvalidId)
+            return Result.failure(AppExceptions.Profile.InvalidId)
         }
 
-        return@withContext try {
+        return try {
             val currentUserId = auth.currentUser?.uid
-                ?: return@withContext Result.failure(AppExceptions.Auth.UserNotLoggedIn)
+                ?: return Result.failure(AppExceptions.Auth.UserNotLoggedIn)
             val db = FirebaseFirestore.getInstance()
             val targetUserRef = db.collection("users").document(id)
             val currentUserRef = db.collection("users").document(currentUserId)
@@ -110,7 +97,7 @@ class ProfileRepositoryImpl @Inject constructor(
                         val name = document.getString("name") ?: ""
                         val userId = document.getString("userId") ?: ""
                         val likeNumber = document.getLong("likeNumber")?.toInt() ?: 0
-                        val releaseDate = document.getLong("releaseDate") ?: 0L
+                        val releaseTime = document.getLong("releaseTime") ?: 0L
 
                         val goalsData = document.get("goals") as? Map<String, Any>
                         val goalsList =
@@ -121,7 +108,6 @@ class ProfileRepositoryImpl @Inject constructor(
                                 goal = goalMap["goal"] as? String ?: "",
                                 id = goalMap["id"] as? String ?: "",
                                 timeRange = goalMap["timeRange"] as? String ?: "",
-                                target = goalMap["target"] as? String ?: "",
                                 isCompleted = goalMap["isCompleted"] as? Boolean ?: false
                             )
                         }
@@ -134,7 +120,7 @@ class ProfileRepositoryImpl @Inject constructor(
                                 goals = goals
                             ),
                             likeNumber = likeNumber,
-                            releaseDate = releaseDate
+                            releaseTime = releaseTime
                         )
                     } catch (e: Exception) {
                         null

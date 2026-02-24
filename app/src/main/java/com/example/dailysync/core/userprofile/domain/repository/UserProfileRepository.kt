@@ -9,5 +9,7 @@ import kotlinx.coroutines.flow.Flow
 interface UserProfileRepository {
     fun getUserProfile(userId: String?): Flow<Result<CoreProfileModel>>
 
+    fun getCurrentUserId():Flow<Result<String?>>
+
     suspend fun signOut(): Result<Unit>
 }

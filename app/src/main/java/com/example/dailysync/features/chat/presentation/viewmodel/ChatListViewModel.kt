@@ -3,10 +3,8 @@ package com.example.dailysync.features.chat.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dailysync.features.chat.domain.model.ChatRoom
-import com.example.dailysync.features.chat.domain.repository.FollowingUser
-import com.example.dailysync.features.chat.domain.usecases.CreateOrGetChatRoomUseCase
-import com.example.dailysync.features.chat.domain.usecases.GetChatRoomsUseCase
-import com.example.dailysync.features.chat.domain.usecases.GetFollowingUsersUseCase
+import com.example.dailysync.features.chat.domain.model.FollowingUser
+import com.example.dailysync.features.chat.domain.usecases.ChatUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -24,9 +22,7 @@ data class ChatListUiState(
 
 @HiltViewModel
 class ChatListViewModel @Inject constructor(
-    private val getChatRoomsUseCase: GetChatRoomsUseCase,
-    private val getFollowingUsersUseCase: GetFollowingUsersUseCase,
-    private val createOrGetChatRoomUseCase: CreateOrGetChatRoomUseCase
+    private val chatUseCases: ChatUseCases,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ChatListUiState())
@@ -35,7 +31,7 @@ class ChatListViewModel @Inject constructor(
     fun fetchChatRooms() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
-            getChatRoomsUseCase().collect { result ->
+            chatUseCases.getChatRoomsUseCase().collect { result ->
                 result.onSuccess { chatRooms ->
                     _uiState.update { it.copy(chatRooms = chatRooms, isLoading = false) }
                 }.onFailure {
@@ -47,7 +43,7 @@ class ChatListViewModel @Inject constructor(
 
     fun fetchFollowingUsers() {
         viewModelScope.launch {
-            getFollowingUsersUseCase().onSuccess { users ->
+            chatUseCases.getFollowingUsersUseCase().onSuccess { users ->
                 _uiState.update { it.copy(followingUsers = users) }
             }
         }
@@ -55,7 +51,7 @@ class ChatListViewModel @Inject constructor(
 
     fun startNewChat(userId: String, userName: String) {
         viewModelScope.launch {
-            createOrGetChatRoomUseCase(userId).onSuccess { chatRoomId ->
+            chatUseCases.createOrGetChatRoomUseCase(userId).onSuccess { chatRoomId ->
                 _uiState.update { it.copy(navigateToChatRoom = chatRoomId to userName) }
             }
         }

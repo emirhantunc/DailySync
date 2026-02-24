@@ -14,12 +14,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.dailysync.features.chat.domain.model.Message
-import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun MessageItem(
     message: Message,
-    currentUserId: String = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+    currentUserId: String
 ) {
     val isCurrentUser = message.senderId == currentUserId
 

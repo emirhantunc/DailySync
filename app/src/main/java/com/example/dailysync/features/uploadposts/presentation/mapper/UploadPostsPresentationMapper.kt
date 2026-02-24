@@ -8,7 +8,6 @@ fun UserGoal.toUserGoalPresentation(): UserGoalPresentation {
         goal = goal,
         id = id,
         timeRange = timeRange,
-        target = target,
         isSelected = false
     )
 }
@@ -21,8 +20,7 @@ fun UserGoalPresentation.toUserGoal(): UserGoal {
     return UserGoal(
         goal = goal,
         id = id,
-        timeRange = timeRange,
-        target = target
+        timeRange = timeRange
     )
 }
 

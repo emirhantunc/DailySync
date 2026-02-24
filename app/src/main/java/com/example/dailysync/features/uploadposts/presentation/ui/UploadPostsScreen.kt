@@ -72,8 +72,8 @@ fun UploadPostsScreen(
             ) {
                 item {
                     AddGoalCard(
-                        onSaveGoal = { goal, timeRange, target ->
-                            viewModel.addNewGoal(goal, timeRange, target)
+                        onSaveGoal = { goal, timeRange ->
+                            viewModel.addNewGoal(goal, timeRange)
                         }
                     )
                 }

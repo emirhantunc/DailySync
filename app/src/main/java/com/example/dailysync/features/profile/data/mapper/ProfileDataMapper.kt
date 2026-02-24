@@ -26,7 +26,7 @@ fun ProfilePostEntity.toProfilePostDomain(): ProfilePostModel {
         userId = userId,
         goals = goals.toProfileGoalsModel(),
         likeNumber = likeNumber,
-        releaseDate = releaseDate
+        releaseTime = releaseTime
     )
 }
 
@@ -41,7 +41,6 @@ fun ProfileGoalsInfoEntity.toProfileGoalsInfoModel(): ProfileGoalsInfoModel {
         goal = goal,
         id = id,
         timeRange = timeRange,
-        target = target,
         isCompleted = isCompleted
     )
 }

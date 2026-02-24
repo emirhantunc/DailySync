@@ -22,7 +22,7 @@ class UploadPostsRepositoryImpl @Inject constructor(
 ) : UploadPostsRepository {
 
     override suspend fun uploadPosts(selectedGoals: List<UserGoal>): Result<Unit> =
-        withContext(Dispatchers.IO) {
+        withContext(Dispatchers.Default) {
             return@withContext try {
                 val userId = auth.currentUser?.uid
                     ?: return@withContext Result.failure(AppExceptions.Auth.UserNotLoggedIn)
@@ -47,7 +47,6 @@ class UploadPostsRepositoryImpl @Inject constructor(
                             "goal" to goal.goal,
                             "id" to goal.id,
                             "timeRange" to goal.timeRange,
-                            "target" to goal.target,
                             "isCompleted" to goal.isCompleted
                         )
                     },
@@ -58,7 +57,7 @@ class UploadPostsRepositoryImpl @Inject constructor(
                     "userId" to userId,
                     "goals" to goalsMap,
                     "likeNumber" to postEntity.likeNumber,
-                    "releaseDate" to releaseTime
+                    "releaseTime" to releaseTime
                 )
 
                 val postDocRef = firestore.collection("posts")
@@ -69,7 +68,6 @@ class UploadPostsRepositoryImpl @Inject constructor(
                     .document()
 
                 val feedMap = mapOf(
-                    "feedId" to feedDocRef.id,
                     "targetId" to postDocRef.id,
                     "type" to "POST",
                     "name" to postEntity.name,

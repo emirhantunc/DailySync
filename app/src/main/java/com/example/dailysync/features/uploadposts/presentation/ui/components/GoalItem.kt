@@ -59,18 +59,10 @@ fun GoalItem(
                     color = MaterialTheme.colorScheme.onSurface
                 )
 
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Chip(
-                        text = goal.timeRange,
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer
-                    )
-                    Chip(
-                        text = goal.target,
-                        containerColor = MaterialTheme.colorScheme.tertiaryContainer
-                    )
-                }
+                Chip(
+                    text = goal.timeRange,
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer
+                )
             }
 
             Icon(

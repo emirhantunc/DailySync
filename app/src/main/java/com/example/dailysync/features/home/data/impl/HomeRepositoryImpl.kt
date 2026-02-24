@@ -4,16 +4,10 @@ import android.util.Log
 import com.example.dailysync.core.enums.FeedType
 import com.example.dailysync.core.exceptions.AppExceptions
 import com.example.dailysync.features.home.data.mapper.toFeedModelList
-import com.example.dailysync.features.home.data.mapper.toPostModel
 import com.example.dailysync.features.home.data.mapper.toThoughtEntity
-import com.example.dailysync.features.home.data.mapper.toThoughtModel
 import com.example.dailysync.features.home.data.model.FeedEntity
-import com.example.dailysync.features.home.data.model.PostEntity
-import com.example.dailysync.features.home.data.model.ThoughtEntity
 import com.example.dailysync.features.home.domain.models.FeedModel
-import com.example.dailysync.features.home.domain.models.PostModel
 import com.example.dailysync.features.home.domain.models.ThoughtModel
-import com.example.dailysync.features.home.domain.models.UserProfile
 import com.example.dailysync.features.home.domain.repository.HomeRepository
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuth
@@ -22,11 +16,10 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -38,9 +31,18 @@ class HomeRepositoryImpl @Inject constructor(
     private val auth: FirebaseAuth
 ) : HomeRepository {
 
+    val userIdFlow: Flow<String?> = callbackFlow {
+        val listener = FirebaseAuth.AuthStateListener { firebaseAuth ->
+            trySend(firebaseAuth.currentUser?.uid)
+        }
+        auth.addAuthStateListener(listener)
+
+        awaitClose { auth.removeAuthStateListener(listener) }
+    }
+
 
     override suspend fun shareThought(thought: ThoughtModel): Result<Unit> =
-        withContext(Dispatchers.IO) {
+        withContext(Dispatchers.Default) {
             return@withContext try {
                 val thoughtEntity = thought.toThoughtEntity()
                 val thoughtMap = mapOf(
@@ -59,7 +61,6 @@ class HomeRepositoryImpl @Inject constructor(
                     .document()
 
                 val feedMap = mapOf(
-                    "feedId" to feedDocRef.id,
                     "targetId" to thoughtDocRef.id,
                     "type" to "THOUGHT",
                     "name" to thoughtEntity.name,
@@ -82,7 +83,7 @@ class HomeRepositoryImpl @Inject constructor(
 
     override suspend fun getLikedFeeds(): Result<List<String>> {
         return try {
-            val userId = auth.currentUser?.uid
+            val userId = userIdFlow.firstOrNull()
                 ?: return Result.failure(AppExceptions.Auth.UserNotLoggedIn)
 
             val snapshot = firestore.collection("users")
@@ -98,7 +99,7 @@ class HomeRepositoryImpl @Inject constructor(
     }
 
     override fun fetchFeeds(): Flow<Result<List<FeedModel>>> = callbackFlow {
-        val userId = auth.currentUser?.uid
+        val userId = userIdFlow.firstOrNull()
         if (userId == null) {
             trySend(Result.failure(AppExceptions.Auth.UserNotLoggedIn))
             close()
@@ -152,7 +153,6 @@ class HomeRepositoryImpl @Inject constructor(
                                         goal = goalMap["goal"] as? String ?: "",
                                         id = goalMap["id"] as? String ?: "",
                                         timeRange = goalMap["timeRange"] as? String ?: "",
-                                        target = goalMap["target"] as? String ?: "",
                                         isCompleted = goalMap["isCompleted"] as? Boolean ?: false
                                     )
                                 }
@@ -191,76 +191,79 @@ class HomeRepositoryImpl @Inject constructor(
         awaitClose {
             listeners.forEach { it.remove() }
         }
-    }.flowOn(Dispatchers.IO)
+    }.flowOn(Dispatchers.Default)
 
-    override suspend fun likeContent(contentId: String, contentType: FeedType): Result<Unit> =
-        withContext(Dispatchers.IO) {
-            return@withContext try {
-                val userId = auth.currentUser?.uid
-                    ?: return@withContext Result.failure(AppExceptions.Auth.UserNotLoggedIn)
+    override suspend fun likeContent(contentId: String, contentType: FeedType): Result<Unit> {
+        return try {
+            val userId =
+                userIdFlow.firstOrNull()
+                    ?: return Result.failure(AppExceptions.Auth.UserNotLoggedIn)
 
-                val querySnapshot = firestore.collection("feeds")
-                    .whereEqualTo("targetId", contentId)
-                    .limit(1)
-                    .get()
-                    .await()
+            val querySnapshot = firestore.collection("feeds")
+                .whereEqualTo("targetId", contentId)
+                .limit(1)
+                .get()
+                .await()
 
-                if (!querySnapshot.isEmpty) {
-                    val document = querySnapshot.documents.first()
-                    val feedId = document.id
-                    val postOwnerId = document.getString("userId") ?: ""
-
-                    document.reference
-                        .update("likeNumber", FieldValue.increment(1))
-                        .await()
-
-                    firestore.collection("users")
-                        .document(userId)
-                        .update("likedFeeds", FieldValue.arrayUnion(feedId))
-                        .await()
-
-                    if (postOwnerId != userId && postOwnerId.isNotBlank()) {
-                        val currentUserDoc = firestore.collection("users")
-                            .document(userId)
-                            .get()
-                            .await()
-                        val currentUserName = currentUserDoc.getString("name") ?: ""
-
-                        val notification = hashMapOf(
-                            "userId" to postOwnerId,
-                            "type" to "LIKE",
-                            "actorId" to userId,
-                            "actorName" to currentUserName,
-                            "targetId" to contentId,
-                            "timestamp" to System.currentTimeMillis(),
-                            "isRead" to false
-                        )
-
-                        firestore.collection("users")
-                            .document(postOwnerId)
-                            .collection("notifications")
-                            .add(notification)
-                            .await()
-                    }
-                }
-
-                firestore.collection(contentType.documentName)
-                    .document(contentId)
-                    .update("likeNumber", FieldValue.increment(1)).await()
+            if (!querySnapshot.isEmpty) {
+                val document = querySnapshot.documents.first()
+                val feedId = document.id
+                val postOwnerId = document.getString("userId") ?: ""
 
                 firestore.collection("users")
                     .document(userId)
-                    .update(contentType.likeFieldName, FieldValue.arrayUnion(contentId)).await()
+                    .update("likedFeeds", FieldValue.arrayUnion(feedId))
+                    .await()
 
-                Result.success(Unit)
-            } catch (e: Exception) {
-                Log.d("likeContent", e.message.toString())
-                Result.failure(AppExceptions.Unknown)
+                firestore.collection("users")
+                    .document(userId)
+                    .update(contentType.likeFieldName, FieldValue.arrayUnion(contentId))
+                    .await()
+
+                document.reference
+                    .update("likeNumber", FieldValue.increment(1))
+                    .await()
+
+                firestore.collection(contentType.documentName)
+                    .document(contentId)
+                    .update("likeNumber", FieldValue.increment(1))
+                    .await()
+
+                if (postOwnerId != userId && postOwnerId.isNotBlank()) {
+                    val currentUserDoc = firestore.collection("users")
+                        .document(userId)
+                        .get()
+                        .await()
+                    val currentUserName = currentUserDoc.getString("name") ?: ""
+
+                    val notification = hashMapOf(
+                        "userId" to postOwnerId,
+                        "type" to "LIKE",
+                        "actorId" to userId,
+                        "actorName" to currentUserName,
+                        "targetId" to contentId,
+                        "timestamp" to System.currentTimeMillis(),
+                        "isRead" to false
+                    )
+
+                    firestore.collection("users")
+                        .document(postOwnerId)
+                        .collection("notifications")
+                        .add(notification)
+                        .await()
+                }
             }
+
+
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Log.d("likeContent", e.message.toString())
+            Result.failure(AppExceptions.Unknown)
         }
+    }
 
     override fun getUnreadNotificationCount(): Flow<Result<Int>> = callbackFlow {
-        val userId = auth.currentUser?.uid
+        val userId = userIdFlow.firstOrNull()
         if (userId == null) {
             trySend(Result.failure(AppExceptions.Auth.UserNotLoggedIn))
             close()
@@ -291,10 +294,10 @@ class HomeRepositoryImpl @Inject constructor(
     override suspend fun unlikeContent(
         contentId: String,
         contentType: FeedType
-    ): Result<Unit> = withContext(Dispatchers.IO) {
-        return@withContext try {
+    ): Result<Unit> {
+        return try {
             val userId = auth.currentUser?.uid
-                ?: return@withContext Result.failure(AppExceptions.Auth.UserNotLoggedIn)
+                ?: return Result.failure(AppExceptions.Auth.UserNotLoggedIn)
 
             val querySnapshot = firestore.collection("feeds")
                 .whereEqualTo("targetId", contentId)
@@ -306,23 +309,25 @@ class HomeRepositoryImpl @Inject constructor(
                 val document = querySnapshot.documents.first()
                 val feedId = document.id
 
-                document.reference
-                    .update("likeNumber", FieldValue.increment(-1))
-                    .await()
-
                 firestore.collection("users")
                     .document(userId)
                     .update("likedFeeds", FieldValue.arrayRemove(feedId))
                     .await()
+
+                firestore.collection("users")
+                    .document(userId)
+                    .update(contentType.likeFieldName, FieldValue.arrayRemove(contentId))
+                    .await()
+
+                document.reference
+                    .update("likeNumber", FieldValue.increment(-1))
+                    .await()
+
+                firestore.collection(contentType.documentName)
+                    .document(contentId)
+                    .update("likeNumber", FieldValue.increment(-1))
+                    .await()
             }
-
-            firestore.collection(contentType.documentName)
-                .document(contentId)
-                .update("likeNumber", FieldValue.increment(-1)).await()
-
-            firestore.collection("users")
-                .document(userId)
-                .update(contentType.likeFieldName, FieldValue.arrayRemove(contentId)).await()
 
             Result.success(Unit)
         } catch (e: Exception) {

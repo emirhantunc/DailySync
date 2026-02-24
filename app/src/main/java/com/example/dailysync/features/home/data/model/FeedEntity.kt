@@ -5,7 +5,6 @@ import com.example.dailysync.core.enums.FeedType
 
 data class FeedEntity(
     val id: String = "",
-    val feedId: String = "",
     val targetId: String = "",
     val type: String = "",
     val name: String = "",

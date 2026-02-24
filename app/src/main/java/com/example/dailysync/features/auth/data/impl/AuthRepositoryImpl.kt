@@ -24,7 +24,7 @@ class AuthRepositoryImpl @Inject constructor(
 ) : AuthRepository {
 
 
-    override suspend fun singIn(model: SignInModel): Result<Unit> = withContext(Dispatchers.IO) {
+    override suspend fun singIn(model: SignInModel): Result<Unit> = withContext(Dispatchers.Default) {
         val entitySingInModel = model.toSingInEntity()
 
         return@withContext try {
@@ -43,7 +43,7 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun singUp(model: SignUpModel): Result<Unit> = withContext(Dispatchers.IO) {
+    override suspend fun singUp(model: SignUpModel): Result<Unit> = withContext(Dispatchers.Default) {
         val entitySingUpModel = model.toSingUpEntity()
 
         return@withContext try {

@@ -110,9 +110,9 @@ fun HomeScreen(
                             userId = feed.userId,
                             timeAgo = getTimeAgo(feed.releaseTime, context = context),
                             likeCount = feed.likeNumber,
-                            isLiked = uiState.likedFeeds.contains(feed.feedId),
+                            isLiked = uiState.likedFeeds.contains(feed.id),
                             onUserClick = { onNavigateToProfile(feed.userId) },
-                            onLikeClick = { viewModel.toggleLike(feed.targetId, feedType) })
+                            onLikeClick = { viewModel.toggleLike(feed.id, feedType,feed.targetId) })
                     }
 
                     "POST" -> {
@@ -125,8 +125,13 @@ fun HomeScreen(
                                 isLiked = uiState.likedFeeds.contains(feed.id),
                                 onUserClick = { onNavigateToProfile(feed.userId) },
                                 onLikeClick = {
-                                    viewModel.toggleLike(feed.targetId, feedType)
-                                })
+                                    viewModel.toggleLike(
+                                        feedId = feed.id,
+                                        contentType = feedType,
+                                        contentId = feed.targetId
+                                    )
+                                }
+                            )
                         }
                     }
                 }

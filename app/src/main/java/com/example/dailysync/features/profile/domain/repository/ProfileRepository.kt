@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.Flow
 
 
 interface ProfileRepository {
-    fun getCurrentUserId(): Flow<Result<String?>>
     suspend fun toggleFollow(id: String): Result<Unit>
     suspend fun getUserPosts(userId: String): Result<List<ProfilePostModel>>
     suspend fun getUserThoughts(userId: String): Result<List<ThoughtModel>>

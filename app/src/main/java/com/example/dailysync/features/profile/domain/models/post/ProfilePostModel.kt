@@ -7,5 +7,5 @@ data class ProfilePostModel(
     val userId: String = "",
     val goals: ProfileGoalsModel = ProfileGoalsModel(),
     val likeNumber: Int = 0,
-    val releaseDate: Long = 0L
+    val releaseTime: Long = 0L
 )

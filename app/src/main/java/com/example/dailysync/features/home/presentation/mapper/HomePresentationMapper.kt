@@ -17,7 +17,6 @@ fun GoalInfo.toGoalInfoPresentation(): GoalInfoPresentation {
         goal = goal,
         id = id,
         timeRange = timeRange,
-        target = target,
         isCompleted = isCompleted
     )
 }
@@ -36,7 +35,6 @@ fun GoalsModel.toGoalsPresentation(): GoalsPresentation {
 fun FeedModel.toFeedPresentation(): FeedPresentation {
     return FeedPresentation(
         id = id,
-        feedId = feedId,
         targetId = targetId,
         type = type,
         name = name,

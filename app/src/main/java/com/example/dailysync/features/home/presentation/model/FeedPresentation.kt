@@ -4,7 +4,6 @@ package com.example.dailysync.features.home.presentation.model
 
 data class FeedPresentation(
     val id: String = "",
-    val feedId: String = "",
     val targetId: String = "",
     val type: String = "",
     val name: String = "",

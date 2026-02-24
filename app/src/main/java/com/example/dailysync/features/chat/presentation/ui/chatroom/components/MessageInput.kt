@@ -29,12 +29,11 @@ fun MessageInput(
     text: String,
     onTextChange: (String) -> Unit,
     onSendClick: () -> Unit,
-    surfaceColor: Color = MaterialTheme.colorScheme.surface
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(surfaceColor)
+            .background(MaterialTheme.colorScheme.surface)
             .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

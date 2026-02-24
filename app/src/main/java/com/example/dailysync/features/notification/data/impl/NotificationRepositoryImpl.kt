@@ -54,7 +54,7 @@ class NotificationRepositoryImpl @Inject constructor(
             }
 
         awaitClose { registration.remove() }
-    }.flowOn(Dispatchers.IO)
+    }.flowOn(Dispatchers.Default)
 
     override suspend fun createNotification(notification: NotificationDomain): Result<Unit> = withContext(Dispatchers.IO) {
         return@withContext try {

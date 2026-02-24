@@ -23,7 +23,6 @@ fun GoalInfoEntity.toGoalInfo(): GoalInfo {
         goal = goal,
         id = id,
         timeRange = timeRange,
-        target = target,
         isCompleted = isCompleted
     )
 }
@@ -67,7 +66,6 @@ fun GoalInfo.toGoalInfoEntity(): GoalInfoEntity {
         goal = goal,
         id = id,
         timeRange = timeRange,
-        target = target,
         isCompleted = isCompleted
     )
 }
@@ -101,7 +99,6 @@ fun ThoughtModel.toThoughtEntity(): ThoughtEntity {
 fun FeedEntity.toFeedModel(): FeedModel {
     return FeedModel(
         id = id,
-        feedId = feedId,
         targetId = targetId,
         type = type,
         name = name,

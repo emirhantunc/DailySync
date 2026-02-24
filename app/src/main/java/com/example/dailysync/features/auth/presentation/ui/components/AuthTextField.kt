@@ -1,7 +1,6 @@
 package com.example.dailysync.features.auth.presentation.ui.components
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
+
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -26,7 +25,6 @@ fun AuthTextField(
     modifier: Modifier = Modifier,
     value: String,
     onValueChange: (String) -> Unit,
-    isValid: Boolean = true,
     leadingIcon: ImageVector,
     label: String,
     visualTransformation: VisualTransformation = VisualTransformation.None

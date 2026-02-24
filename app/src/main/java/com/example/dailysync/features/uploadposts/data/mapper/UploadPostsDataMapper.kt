@@ -12,7 +12,6 @@ fun UserGoalEntity.toUserGoal(): UserGoal {
         goal = goal,
         id = id,
         timeRange = timeRange,
-        target = target,
         isCompleted = isCompleted
     )
 }
@@ -26,7 +25,6 @@ fun UserGoal.toUserGoalEntity(): UserGoalEntity {
         goal = goal,
         id = id,
         timeRange = timeRange,
-        target = target,
         isCompleted = isCompleted
     )
 }

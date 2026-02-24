@@ -1,6 +1,5 @@
 package com.example.dailysync.features.profile.data.models.post
 
-import com.example.dailysync.features.home.domain.models.GoalsModel
 
 data class ProfilePostEntity(
     val postId: String = "",
@@ -8,5 +7,5 @@ data class ProfilePostEntity(
     val userId: String = "",
     val goals: ProfileGoalsEntity = ProfileGoalsEntity(),
     val likeNumber: Int = 0,
-    val releaseDate: Long = 0L
+    val releaseTime: Long = 0L
 )

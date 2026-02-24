@@ -1,13 +1,11 @@
 package com.example.dailysync.features.chat.domain.repository
 
 import com.example.dailysync.features.chat.domain.model.ChatRoom
+import com.example.dailysync.features.chat.domain.model.FollowingUser
 import com.example.dailysync.features.chat.domain.model.Message
 import kotlinx.coroutines.flow.Flow
 
-data class FollowingUser(
-    val id: String = "",
-    val name: String = ""
-)
+
 
 interface ChatRepository {
     fun getChatRooms(): Flow<Result<List<ChatRoom>>>

@@ -1,7 +1,6 @@
 package com.example.dailysync.features.profile.presentation.mapper
 
 import com.example.dailysync.core.userprofile.domain.model.CoreProfileModel
-import com.example.dailysync.features.profile.domain.models.ProfileModel
 import com.example.dailysync.features.profile.domain.models.post.ProfileGoalsInfoModel
 import com.example.dailysync.features.profile.domain.models.post.ProfileGoalsModel
 import com.example.dailysync.features.profile.domain.models.post.ProfilePostModel
@@ -28,7 +27,6 @@ fun ProfileGoalsInfoModel.toProfileGoalsInfoPresentation(): ProfileGoalsInfoPres
         goal = goal,
         id = id,
         timeRange = timeRange,
-        target = target,
         isCompleted = isCompleted
     )
 }
@@ -40,7 +38,11 @@ fun List<ProfileGoalsInfoModel>.toProfileGoalsInfoPresentationList():List<Profil
 fun ProfilePostModel.toProfilePostPresentation(): ProfilePostPresentation {
     return ProfilePostPresentation(
         postId = postId,
-        goals = goals.toProfileGoalsPresentation()
+        goals = goals.toProfileGoalsPresentation(),
+        name = name,
+        userId = userId,
+        likeNumber = likeNumber,
+        releaseTime = releaseTime
     )
 }
 

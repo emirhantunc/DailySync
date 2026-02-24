@@ -221,7 +221,7 @@ fun ProfileScreen(
                             ) {
                                 OutlinedButton(
                                     onClick = {
-                                        viewModel.createOrGetChatRoom(userId ?: "", profile.name)
+                                        viewModel.createOrGetChatRoom(userId, profile.name)
                                     },
                                     modifier = Modifier.weight(1f),
                                     shape = RoundedCornerShape(16.dp),
@@ -325,7 +325,7 @@ fun ProfileScreen(
                                     val post = uiState.userPosts[page]
                                     PostCard(
                                         userName = profile.name,
-                                        timeAgo = getTimeAgo(post.releaseDate, context = context),
+                                        timeAgo = getTimeAgo(post.releaseTime, context = context),
                                         goalInfoList = post.goals.goals,
                                         likeCount = post.likeNumber,
                                         isLiked = true,
