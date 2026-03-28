@@ -16,6 +16,10 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.dailysync.ui.BottomItem
+import com.example.dailysync.ui.DailySyncBottomBar
+import com.example.dailysync.ui.DailySyncNavGraph
+import com.example.dailysync.ui.navigation.Routes
 import com.example.dailysync.ui.theme.DailySyncTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -57,7 +61,7 @@ class MainActivity : ComponentActivity() {
                         bottom = 0.dp
                     )
                     Box(modifier = Modifier.padding(paddingValues =padding)) {
-                        DailySyncNavGraph(navController = navController, innerPadding)
+                        DailySyncNavGraph(navController = navController)
                     }
                 }
             }

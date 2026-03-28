@@ -1,4 +1,4 @@
-package com.example.dailysync
+package com.example.dailysync.ui
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.PaddingValues
@@ -20,6 +20,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -28,10 +30,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
+import com.example.dailysync.R
+import com.example.dailysync.ui.navigation.Routes
 import com.example.dailysync.features.auth.presentation.ui.SignInScreen
 import com.example.dailysync.features.auth.presentation.ui.SignUpScreen
 import com.example.dailysync.features.chat.presentation.ui.chatlist.ChatListScreen
 import com.example.dailysync.features.chat.presentation.ui.chatroom.ChatRoomScreen
+import com.example.dailysync.features.notification.presentation.ui.NotificationScreen
 import com.example.dailysync.features.profile.presentation.ui.ProfileScreen
 import com.example.dailysync.features.search.presentation.ui.SearchScreen
 import com.example.dailysync.features.uploadposts.presentation.ui.UploadPostsScreen
@@ -68,19 +73,13 @@ enum class BottomItem(
 @Composable
 fun DailySyncNavGraph(
     navController: NavHostController,
-    innerPadding: PaddingValues
+    viewModel: MainViewModel = hiltViewModel()
 ) {
-    val auth = remember { FirebaseAuth.getInstance() }
+    val userId by viewModel.loginState.collectAsStateWithLifecycle()
 
-    var isUserLoggedIn by remember { mutableStateOf(auth.currentUser != null) }
-    var initialRoute by remember {
-        mutableStateOf(if (isUserLoggedIn) Routes.Home.route else Routes.SignInScreen.route)
-    }
-
-    LaunchedEffect(Unit) {
-        val authStateListener = FirebaseAuth.AuthStateListener { firebaseAuth ->
-            isUserLoggedIn = firebaseAuth.currentUser != null
-            if (!isUserLoggedIn && navController.currentDestination?.route != Routes.SignInScreen.route) {
+    LaunchedEffect(userId) {
+        if (userId == null) {
+            if (navController.currentDestination?.route != Routes.SignInScreen.route) {
                 navController.navigate(Routes.SignInScreen.route) {
                     popUpTo(navController.graph.findStartDestination().id) {
                         inclusive = true
@@ -88,12 +87,12 @@ fun DailySyncNavGraph(
                 }
             }
         }
-        auth.addAuthStateListener(authStateListener)
     }
+    val startDestination = if (userId != null) Routes.Home.route else Routes.SignInScreen.route
 
     NavHost(
         navController = navController,
-        startDestination = initialRoute
+        startDestination = startDestination
     ) {
         composable(route = Routes.SignUpScreen.route) {
             SignUpScreen(goSignInScreen = {
@@ -169,7 +168,7 @@ fun DailySyncNavGraph(
         }
 
         composable(route = Routes.Notification.route) {
-            com.example.dailysync.features.notification.presentation.ui.NotificationScreen(
+            NotificationScreen(
                 onNavigateBack = {
                     navController.popBackStack()
                 },

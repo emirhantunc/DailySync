@@ -19,7 +19,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,13 +27,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.util.fastForEach
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.dailysync.R
 import com.example.dailysync.core.enums.ErrorType
-import com.example.dailysync.core.ui.DailySyncAlertDialog
 import com.example.dailysync.core.utils.getTimeAgo
+import com.example.dailysync.features.profile.presentation.ui.components.LogoutDialog
 import com.example.dailysync.features.profile.presentation.ui.components.NoActivitiesCard
 import com.example.dailysync.features.profile.presentation.ui.components.PostCard
 import com.example.dailysync.features.profile.presentation.ui.components.ProfileThoughtItem
@@ -387,14 +385,11 @@ fun ProfileScreen(
 
 
     if (uiState.showLogoutDialog) {
-        DailySyncAlertDialog(
-            title = stringResource(R.string.logout_dialog_title),
-            subtitle = stringResource(R.string.logout_dialog_message),
-            onDismiss = { viewModel.hideLogoutDialog() },
-            onConfirm = { viewModel.signOut() },
-            confirmButtonText = stringResource(R.string.confirm),
-            dismissButtonText = stringResource(R.string.cancel)
-        )
+        LogoutDialog(onDismiss = {
+            viewModel.hideLogoutDialog()
+        }, onConfirm = {
+            viewModel.signOut()
+        })
     }
 }
 

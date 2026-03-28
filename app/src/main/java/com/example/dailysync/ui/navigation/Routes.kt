@@ -1,4 +1,4 @@
-package com.example.dailysync
+package com.example.dailysync.ui.navigation
 
 sealed class Routes(val route: String){
     object SignInScreen:Routes("sign_in")
@@ -24,4 +24,3 @@ sealed class Routes(val route: String){
         }
     }
 }
-
